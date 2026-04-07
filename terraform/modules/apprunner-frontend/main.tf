@@ -49,6 +49,11 @@ resource "aws_apprunner_service" "frontend" {
 
     auto_deployments_enabled = true
   }
+
+  instance_configuration {
+    cpu    = "0.25 vCPU"
+    memory = "0.5 GB"
+  }
 }
 
 resource "aws_apprunner_custom_domain_association" "ugram_zowks_fr" {
