@@ -4,10 +4,14 @@ import { UserTokenDataDto } from '../auth/entities/user-token-data.js';
 import { PrivateMessageCreateDto } from './dto/create-private-message.dto.js';
 import { CreatedPrivateMessageDto } from './entities/created-private-message.js';
 import { PrivateMessageList } from './schemas/private-message-list.schema.js';
+import { PrivateMessagesGateway } from './private-messages.gateway.js';
 
 @Injectable()
 export class PrivateMessagesService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly messagesGateway: PrivateMessagesGateway,
+  ) {}
 
   async list(me: string, userId: string): Promise<PrivateMessageList> {
     const mySentMessages = await this.prismaService.privateMessage.findMany({
@@ -49,13 +53,31 @@ export class PrivateMessagesService {
     token: UserTokenDataDto,
     dto: PrivateMessageCreateDto,
   ): Promise<CreatedPrivateMessageDto> {
-    return this.prismaService.privateMessage.create({
+    const message = await this.prismaService.privateMessage.create({
       data: {
         fromUserId: token.id,
         toUserId: dto.to,
         content: dto.content,
       },
-      select: { id: true },
+      select: {
+        id: true,
+        fromUserId: true,
+        toUserId: true,
+        content: true,
+        createdAt: true,
+      },
     });
+
+    const refinedMessage = {
+      id: message.id,
+      from: message.fromUserId,
+      to: message.toUserId,
+      content: message.content,
+      createdAt: message.createdAt.toISOString(),
+    };
+
+    this.messagesGateway.notifyRecipient(refinedMessage);
+
+    return refinedMessage;
   }
 }

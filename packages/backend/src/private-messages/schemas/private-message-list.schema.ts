@@ -1,11 +1,11 @@
 import z from 'zod';
 
 export const privateMessageSchema = z.object({
-  from: z.string().meta({
-    description: 'The ID of the user who sent the message.',
+  from: z.uuid().meta({
+    description: 'The ID of the user who sent the message',
   }),
   content: z.string().meta({
-    description: 'The content of the message.',
+    description: 'The content of the message',
   }),
   createdAt: z.iso.datetime().meta({
     description: 'The creation date of the message',
@@ -13,7 +13,7 @@ export const privateMessageSchema = z.object({
 });
 
 export const privateMessageListSchema = z.array(privateMessageSchema).meta({
-  description: 'The list of private messages, most recent first.',
+  description: 'The list of private messages, most recent first',
 });
 
 export type PrivateMessageList = z.infer<typeof privateMessageListSchema>;
