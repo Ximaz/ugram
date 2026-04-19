@@ -25,7 +25,8 @@
     "prisma:migrate": "dotenv -e .env.dev -- prisma migrate dev",
     "prisma:generate": "DATABASE_URL=postgres://null:null@null:5432/null prisma generate",
     "prisma:deploy": "prisma migrate deploy",
-    "prisma:studio": "dotenv -e .env.dev -- prisma studio"
+    "prisma:studio": "dotenv -e .env.dev -- prisma studio",
+    "prisma:format": "prisma format"
   },
   "exports": {
     "./schemas": "./src/index.schema.ts"
