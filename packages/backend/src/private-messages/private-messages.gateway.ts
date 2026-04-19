@@ -16,7 +16,7 @@ export class PrivateMessagesGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private activeUsers = new Map<string, string>();
 
@@ -24,7 +24,7 @@ export class PrivateMessagesGateway
 
   async handleConnection(client: Socket) {
     try {
-      const authHandshake = client.handshake.auth?.token;
+      const authHandshake = client.handshake.auth['token'] as string;
       const authHeader = client.handshake.headers?.authorization;
 
       let token = authHandshake;
@@ -51,17 +51,19 @@ export class PrivateMessagesGateway
       const userId = payload.id;
       this.activeUsers.set(userId, client.id);
 
-      client.data.userId = userId;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      client.data['userId'] = userId;
 
       console.log(`User ${userId} connected with socket ${client.id}`);
     } catch (error) {
-      console.error(`WebSocket Authentication Failed: ${error.message}`);
+      console.error(`WebSocket Authentication Failed: ${error}`);
       client.disconnect();
     }
   }
 
   handleDisconnect(client: Socket) {
-    const userId = client.data.userId;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId = client.data['userId'] as string;
     if (userId) {
       this.activeUsers.delete(userId);
       console.log(`User ${userId} disconnected`);
