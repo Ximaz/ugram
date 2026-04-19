@@ -1,6 +1,9 @@
 import z from 'zod';
 
 export const privateMessageSchema = z.object({
+  id: z.uuid().meta({
+    description: 'The message ID',
+  }),
   from: z.uuid().meta({
     description: 'The ID of the user who sent the message',
   }),

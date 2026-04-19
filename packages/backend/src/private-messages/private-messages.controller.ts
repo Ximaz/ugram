@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -40,6 +41,21 @@ export class PrivateMessagesController {
     private readonly privateMessagesService: PrivateMessagesService,
   ) {}
 
+  @Get('/')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: PrivateMessageListDto,
+    description:
+      "The list of new messages. If 'since' (ISO datetime) is null, returns all message.",
+  })
+  async list(
+    @Req() request: FastifyRequest,
+    @Query('since') since: string = '1970-01-01T00:00:00.000Z',
+  ): Promise<PrivateMessageListDto> {
+    const token = request['user'] as UserTokenData;
+    return await this.privateMessagesService.list(token.id, since);
+  }
+
   @Get('/:id')
   @UseGuards(AuthGuard)
   @ApiParam({
@@ -51,12 +67,12 @@ export class PrivateMessagesController {
     type: PrivateMessageListDto,
     description: 'The list of private message with a given user.',
   })
-  async list(
+  async get(
     @Req() request: FastifyRequest,
     @Param('id') userId: string,
   ): Promise<PrivateMessageListDto> {
     const token = request['user'] as UserTokenData;
-    return await this.privateMessagesService.list(token.id, userId);
+    return await this.privateMessagesService.getMessageWith(token.id, userId);
   }
 
   @Post()

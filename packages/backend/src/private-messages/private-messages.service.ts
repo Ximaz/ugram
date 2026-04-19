@@ -13,9 +13,13 @@ export class PrivateMessagesService {
     private readonly messagesGateway: PrivateMessagesGateway,
   ) {}
 
-  async list(me: string, userId: string): Promise<PrivateMessageList> {
+  async getMessageWith(
+    me: string,
+    userId: string,
+  ): Promise<PrivateMessageList> {
     const mySentMessages = await this.prismaService.privateMessage.findMany({
       select: {
+        id: true,
         fromUserId: true,
         content: true,
         createdAt: true,
@@ -29,6 +33,7 @@ export class PrivateMessagesService {
 
     const theirSentMessage = await this.prismaService.privateMessage.findMany({
       select: {
+        id: true,
         fromUserId: true,
         content: true,
         createdAt: true,
@@ -43,10 +48,34 @@ export class PrivateMessagesService {
     return [...mySentMessages, ...theirSentMessage]
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((msg) => ({
+        id: msg.id,
         from: msg.fromUserId,
         content: msg.content,
         createdAt: msg.createdAt.toISOString(),
       }));
+  }
+
+  async list(me: string, since: string): Promise<PrivateMessageList> {
+    const newMessages = await this.prismaService.privateMessage.findMany({
+      select: {
+        id: true,
+        fromUserId: true,
+        content: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      where: {
+        toUserId: me,
+        createdAt: { gte: new Date(since) },
+      },
+    });
+
+    return newMessages.map((msg) => ({
+      id: msg.id,
+      from: msg.fromUserId,
+      content: msg.content,
+      createdAt: msg.createdAt.toISOString(),
+    }));
   }
 
   async create(
