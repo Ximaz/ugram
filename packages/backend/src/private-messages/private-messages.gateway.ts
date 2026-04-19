@@ -28,7 +28,6 @@ export class PrivateMessagesGateway
       const authHeader = client.handshake.headers?.authorization;
 
       let token = authHandshake;
-      console.log({ token, authHandshake, authHeader });
       if (!token && authHeader) {
         const [bearer, headerToken] = authHeader.split(' ');
         if (bearer === 'Bearer' && headerToken) {
