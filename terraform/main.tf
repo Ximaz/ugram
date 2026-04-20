@@ -69,7 +69,7 @@ module "backend" {
     S3_REGION   = var.aws_region
     S3_ENDPOINT = "https://s3.${var.aws_region}.amazonaws.com"
 
-    DATABASE_URL = "postgresql://${var.postgres_user}:${var.postgres_password}@${module.database.endpoint}:5432/${var.postgres_db}?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem"
+    DATABASE_URL = "postgresql://${var.postgres_user}:${var.postgres_password}@${module.database.endpoint}:5432/${var.postgres_db}?sslmode=require" #-full&sslrootcert=/certs/global-bundle.pem"
 
     JWT_SECRET     = var.jwt_secret
     JWT_EXPIRES_IN = var.jwt_expires_in

@@ -34,8 +34,7 @@ RUN pnpm deploy --filter=backend --prod --legacy /prod-app
 
 FROM node:24.13.0-alpine3.23 AS app
 
-RUN apk add curl --no-cache
-
+RUN apk add --no-cache curl libc6-compat openssl
 
 RUN mkdir -p /certs && \
 curl -L "https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem" --output /certs/global-bundle.pem

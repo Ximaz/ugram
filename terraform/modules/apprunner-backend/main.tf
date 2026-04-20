@@ -13,36 +13,6 @@ resource "aws_iam_role" "backend_apprunner_ecr_access" {
   })
 }
 
-resource "aws_iam_role_policy" "backend_google_client_id" {
-  role = aws_iam_role.backend_instance_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "secretsmanager:GetSecretValue"
-      ]
-      Resource = aws_secretsmanager_secret.google_client_id.arn
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "backend_google_client_secret" {
-  role = aws_iam_role.backend_instance_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "secretsmanager:GetSecretValue"
-      ]
-      Resource = aws_secretsmanager_secret.google_client_secret.arn
-    }]
-  })
-}
-
 resource "aws_iam_role_policy_attachment" "backend_apprunner_ecr_policy" {
   role       = aws_iam_role.backend_apprunner_ecr_access.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
@@ -59,6 +29,23 @@ resource "aws_iam_role" "backend_instance_role" {
         Service = "tasks.apprunner.amazonaws.com"
       }
       Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "backend_secrets_access" {
+  name = "backend-secrets-access"
+  role = aws_iam_role.backend_apprunner_ecr_access.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = ["secretsmanager:GetSecretValue"]
+      Resource = [
+        aws_secretsmanager_secret.google_client_id.arn,
+        aws_secretsmanager_secret.google_client_secret.arn
+      ]
     }]
   })
 }
