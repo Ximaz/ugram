@@ -82,6 +82,15 @@ resource "aws_apprunner_service" "backend" {
 
   auto_scaling_configuration_arn = aws_apprunner_auto_scaling_configuration_version.backend_single_threaded.arn
 
+  health_check_configuration {
+    protocol            = "HTTP"
+    path                = "/health"
+    interval            = 10
+    timeout             = 5
+    healthy_threshold   = 1
+    unhealthy_threshold = 5
+  }
+
   source_configuration {
     authentication_configuration {
       access_role_arn = aws_iam_role.backend_apprunner_ecr_access.arn
