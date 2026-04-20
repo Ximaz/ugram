@@ -1,14 +1,14 @@
 name: Backend CI
 
 on:
-  push:
-    branches:
-      - dev
-    paths:
-      - "packages/backend/**"
-  pull_request:
-    paths:
-      - "packages/backend/**"
+  - push
+  #   branches:
+  #     - dev
+  #   paths:
+  #     - "packages/backend/**"
+  # pull_request:
+  #   paths:
+  #     - "packages/backend/**"
 
 concurrency:
   group: ci-backend-${{ github.ref }}
