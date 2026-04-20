@@ -21,7 +21,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:reset": "dotenv -e .env.dev -- prisma migrate reset",
+    "prisma:reset": "dotenv -e .env.dev -- prisma migrate reset --force",
     "prisma:migrate": "dotenv -e .env.dev -- prisma migrate dev",
     "prisma:generate": "DATABASE_URL=postgres://null:null@null:5432/null prisma generate",
     "prisma:deploy": "prisma migrate deploy",

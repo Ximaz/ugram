@@ -17,6 +17,8 @@ done
 
 echo -e "\nDatabase ready"
 
+pnpm prisma:reset
+
 pnpm prisma:deploy
 
 pnpm start:prod
